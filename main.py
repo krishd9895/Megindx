@@ -1,6 +1,6 @@
 import subprocess
 import time
-from flask import Flask, redirect, url_for
+from flask import Flask
 import threading
 import os
 import random
@@ -69,12 +69,8 @@ def get_streaming_url(secret):
 
 @app.route('/')
 def index():
-    return 'Server running'
-
-@app.route('/<path:filename>')
-def stream_file(filename):
-    # Generate secret and redirect to streaming URL
+    # Generate secret and streaming URL
     secret = generate_secret()
     streaming_url = get_streaming_url(secret)
-    print(f"Streaming URL: {streaming_url}")  # Print the streaming URL
-    return redirect(streaming_url)
+    print(f"Streaming URL: {streaming_url}")
+    return 'Server running'
