@@ -64,8 +64,8 @@ port = 8080
 serve_rclone(cloud_name, port)
 
 # Function to generate streaming URL
-def get_streaming_url(secret, filename):
-    return f"{base_url}/{secret}/{filename}"
+def get_streaming_url(secret):
+    return f"{base_url}/{secret}"
 
 @app.route('/')
 def index():
@@ -74,12 +74,6 @@ def index():
 @app.route('/file/<path:filename>')
 def stream_file(filename):
     secret = generate_secret()
-    streaming_url = get_streaming_url(secret, filename)
+    streaming_url = get_streaming_url(secret)
     print(f"Streaming URL: {streaming_url}")  # Print the streaming URL
-    return redirect(url_for('stream_with_secret', filename=filename, secret=secret))
-
-@app.route('/<secret>/<path:filename>')
-def stream_with_secret(secret, filename):
-    # Verify secret here if needed
-    streaming_url = f"{base_url}/{secret}/{filename}"
     return redirect(streaming_url)
