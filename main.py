@@ -6,17 +6,6 @@ import os
 import random
 import string
 
-# Initialize Flask app
-app = Flask(__name__)
-
-# Function to start the Flask server
-def start_flask():
-    app.run(port=5000)
-
-# Start the Flask server in a separate thread
-flask_thread = threading.Thread(target=start_flask)
-flask_thread.start()
-
 # Step 1: Download the rclone binary using Python
 def download_rclone():
     url = "https://gitlab.com/developeranaz/git-hosts/-/raw/main/rclone/rclone"
@@ -40,6 +29,9 @@ def serve_rclone(cloud_name, port):
         "--vfs-read-chunk-size", "256M", "--vfs-read-chunk-size-limit", "2G", "--vfs-cache-mode", "writes"
     ]
     subprocess.Popen(serve_command)  # Run in the background
+
+# Initialize Flask app
+app = Flask(__name__)
 
 # Generate random secret code
 def generate_secret():
@@ -74,3 +66,11 @@ def index():
     streaming_url = get_streaming_url(secret)
     print(f"Streaming URL: {streaming_url}")  # Print the streaming URL
     return redirect(streaming_url)
+
+# Function to start the Flask server
+def start_flask():
+    app.run(port=5000)
+
+# Start the Flask server in a separate thread
+flask_thread = threading.Thread(target=start_flask)
+flask_thread.start()
