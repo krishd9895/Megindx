@@ -45,9 +45,9 @@ serve_rclone(cloud_name, port)
 # Initialize Flask app
 app = Flask(__name__)
 
-# Generate random secret for URL
+# Generate random secret code
 def generate_secret():
-    return secrets.token_urlsafe(16)
+    return secrets.token_urlsafe(9)  # 12 characters (approximately)
 
 # Function to start the Flask server
 def start_flask():
@@ -60,12 +60,10 @@ flask_thread.start()
 # Allow some time for the servers to start
 time.sleep(5)
 
-base_url = "http://localhost:5000"
-rclone_serve_url = f"http://localhost:{port}"
-
+# Define base URL
+base_url = os.environ.get('BASE_URL', 'http://localhost:5000')
 print("Servers are running.")
 print(f"Access the Flask server at {base_url}")
-print(f"Rclone files are being served at {rclone_serve_url}")
 
 @app.route('/')
 def index():
@@ -74,11 +72,11 @@ def index():
 @app.route('/file/<path:filename>')
 def stream_file(filename):
     secret = generate_secret()
-    # Redirect to a URL with a random secret attached to the base URL
+    # Redirect to a URL with the base URL and random secret code
     return redirect(url_for('stream_with_secret', filename=filename, secret=secret))
 
 @app.route('/<secret>/<path:filename>')
 def stream_with_secret(secret, filename):
     # Verify secret here if needed
-    streaming_url = f"{rclone_serve_url}/{filename}"
+    streaming_url = f"{base_url}/{secret}/{filename}"
     return redirect(streaming_url)
