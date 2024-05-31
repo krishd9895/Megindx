@@ -69,10 +69,7 @@ def get_streaming_url(secret):
 
 @app.route('/')
 def index():
-    return 'Welcome to the MEGA file streaming service!'
-
-@app.route('/file/<path:filename>')
-def stream_file(filename):
+    # Generate secret and redirect to streaming URL
     secret = generate_secret()
     streaming_url = get_streaming_url(secret)
     print(f"Streaming URL: {streaming_url}")  # Print the streaming URL
