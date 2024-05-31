@@ -42,6 +42,14 @@ base_url = os.environ.get('BASE_URL', 'http://localhost:5000')
 print("Servers are running.")
 print(f"Access the Flask server at {base_url}")
 
+# Function to start the Flask server
+def start_flask():
+    app.run(port=5000)
+
+# Start the Flask server in a separate thread
+flask_thread = threading.Thread(target=start_flask)
+flask_thread.start()
+
 # Download rclone
 download_rclone()
 
@@ -66,11 +74,3 @@ def index():
     streaming_url = get_streaming_url(secret)
     print(f"Streaming URL: {streaming_url}")  # Print the streaming URL
     return redirect(streaming_url)
-
-# Function to start the Flask server
-def start_flask():
-    app.run(port=5000)
-
-# Start the Flask server in a separate thread
-flask_thread = threading.Thread(target=start_flask)
-flask_thread.start()
