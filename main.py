@@ -18,14 +18,6 @@ base_url = os.environ.get('BASE_URL', 'http://localhost:5000')
 print("Servers are running.")
 print(f"Access the Flask server at {base_url}")
 
-# Function to start the Flask server
-def start_flask():
-    app.run(port=5000)
-
-# Start the Flask server in a separate thread
-flask_thread = threading.Thread(target=start_flask)
-flask_thread.start()
-
 # Step 1: Download the rclone binary using Python
 def download_rclone():
     url = "https://gitlab.com/developeranaz/git-hosts/-/raw/main/rclone/rclone"
@@ -67,12 +59,24 @@ serve_rclone(cloud_name, port)
 def get_streaming_url(secret):
     return f"{base_url}/{secret}"
 
+# Route to serve rclone files based on secret
 @app.route('/<secret>')
 def serve_secret(secret):
-    # Generate secret and streaming URL
+    # Generate streaming URL
     streaming_url = get_streaming_url(secret)
     print(f"Streaming URL for secret '{secret}': {streaming_url}")
     
-    # Return a response indicating success
+    # Use subprocess to serve rclone files for the secret
+    serve_command = [
+        "./rclone", "serve", "http", f"{cloud_name}:", "--addr", f":{port}",
+        "--buffer-size", "256M", "--dir-cache-time", "12h",
+        "--vfs-read-chunk-size", "256M", "--vfs-read-chunk-size-limit", "2G", "--vfs-cache-mode", "writes"
+    ]
+    subprocess.Popen(serve_command)  # Run in the background
+
     return f"Serving rclone files for secret '{secret}'."
+
+# Start the Flask server
+if __name__ == '__main__':
+    app.run(port=5000)
 
