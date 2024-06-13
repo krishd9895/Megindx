@@ -59,7 +59,7 @@ username = os.environ['username']
 password = os.environ['password']
 configure_rclone(cloud_name, username, password)
 
-# Serve the MEGA directory
+# Serve the MEGA directory (modify this according to your specific setup)
 port = 8080
 serve_rclone(cloud_name, port)
 
@@ -68,9 +68,8 @@ def get_streaming_url(secret):
     return f"{base_url}/{secret}"
 
 @app.route('/<secret>')
-def index(secret):
+def serve_secret(secret):
     # Generate secret and streaming URL
     streaming_url = get_streaming_url(secret)
-    print(f"Streaming URL: {streaming_url}")
-    return 'Server running'
-
+    print(f"Streaming URL for secret '{secret}': {streaming_url}")
+    return subprocess.check_output(["./rclone", "serve", "http", f"{cloud_name}:", "--addr", f":{port}", "--buffer-size", "256M", "--dir-cache-time", "12h", "--vfs-read-chunk-size", "256M", "--vfs-read-chunk-size-limit", "2G", "--vfs-cache-mode", "writes"]).
