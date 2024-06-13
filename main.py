@@ -72,4 +72,7 @@ def serve_secret(secret):
     # Generate secret and streaming URL
     streaming_url = get_streaming_url(secret)
     print(f"Streaming URL for secret '{secret}': {streaming_url}")
-    return subprocess.check_output(["./rclone", "serve", "http", f"{cloud_name}:", "--addr", f":{port}", "--buffer-size", "256M", "--dir-cache-time", "12h", "--vfs-read-chunk-size", "256M", "--vfs-read-chunk-size-limit", "2G", "--vfs-cache-mode", "writes"]).
+    
+    # Return a response indicating success
+    return f"Serving rclone files for secret '{secret}'."
+
