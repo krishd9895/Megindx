@@ -67,10 +67,10 @@ serve_rclone(cloud_name, port)
 def get_streaming_url(secret):
     return f"{base_url}/{secret}"
 
-@app.route('/')
-def index():
+@app.route('/<secret>')
+def index(secret):
     # Generate secret and streaming URL
-    secret = generate_secret()
     streaming_url = get_streaming_url(secret)
     print(f"Streaming URL: {streaming_url}")
     return 'Server running'
+
